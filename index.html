@@ -29,7 +29,7 @@
             e.preventDefault();
             if (textInput.value && fileInput.value ==='') {
                 if (textInput.value.substring(0, 1) === '@') {
-                    var zero = 1*textInput.value.indexOf(' ', 0);
+                    var zero = textInput.value.indexOf(' ', 0);
                     var destiny;
                     if(zero == -1){
                         destiny = textInput.value.substring(1);
@@ -46,7 +46,7 @@
             } else if (fileInput.value) {
                 if (textInput.value.substring(0, 1) === '@') {
                     var archivo = fileInput.files[0]
-                    var zero = 1*textInput.value.indexOf(' ', 0);
+                    var zero = textInput.value.indexOf(' ', 0);
                     var destiny;
                     if(zero == -1){
                         destiny = textInput.value.substring(1);
