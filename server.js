@@ -1,12 +1,13 @@
-const { CONNREFUSED } = require('dns');
 const { connect } = require('http2');
-
+const express = require('express')
 const application = require('express')();
 const server = require('http').createServer(application)
 const io = require('socket.io')(server);
 const PORT = process.env.PORT || 3000
 
-const Users = [];
+var Users = [];
+
+application.use(express.static(__dirname + '/assets/'))
 
 application.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -20,6 +21,7 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('Usuario desconectado - Usuario: ' + socket.username);
+        Users = Users.filter((item) => item !== socket.username);
         io.emit('send server message', { message: socket.username + " se ha ido" })
     });
 

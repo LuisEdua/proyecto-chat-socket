@@ -4,11 +4,51 @@
 <head>
     <title>SocketsChat</title>
     <script src="/socket.io/socket.io.js"></script>
-    <link rel="stylesheet" href="index.css">
+    <style>
+        body {
+            background-color: black;
+            color: aliceblue;
+
+        }
+
+        #message_list{
+            width: 95%;
+            border-width: 2px;
+            border-color: aliceblue;
+        }
+
+        div {
+            margin: 2%;
+        }
+
+        .all_style{
+            width: 30%;
+            float: left;
+            background-color: white;
+            color: black;
+        }
+
+        .your_style{
+            width: 30%;
+            float: right;
+            background-color: aquamarine;
+            color: black;   
+        }
+
+        .all_messages {
+            display: flex;
+            justify-content: start;
+        }
+
+        .your_messages {
+            display: flex;
+            justify-content: end;
+        }
+    </style>
 </head>
 
 <body>
-    <ul id="message_list"></ul>
+    <div id="message_list"></div>
     <form id="message_area" action="">
         <input id="text_area" autocomplete="off" />
         <input id="file_area" type="file">
@@ -27,11 +67,11 @@
 
         messageForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            if (textInput.value && fileInput.value ==='') {
+            if (textInput.value && fileInput.value === '') {
                 if (textInput.value.substring(0, 1) === '@') {
                     var zero = textInput.value.indexOf(' ', 0);
                     var destiny;
-                    if(zero == -1){
+                    if (zero == -1) {
                         destiny = textInput.value.substring(1);
                     } else {
                         destiny = textInput.value.substring(1, zero);
@@ -48,7 +88,7 @@
                     var archivo = fileInput.files[0]
                     var zero = textInput.value.indexOf(' ', 0);
                     var destiny;
-                    if(zero == -1){
+                    if (zero == -1) {
                         destiny = textInput.value.substring(1);
                     } else {
                         destiny = textInput.value.substring(1, zero);
@@ -82,45 +122,90 @@
 
         socket.on('send message', (data) => {
             const messageList = document.getElementById('message_list');
-            const chatItem = document.createElement('li');
-            chatItem.textContent = data.user + ': ' + data.message;
-            messageList.appendChild(chatItem);
+            const chatItem = document.createElement('div');
+            const chatItem1 = document.createElement('div')
+            var origin = data.user
+            if (data.user === username) {
+                origin = 'You';
+                chatItem1.className += 'your_messages';
+                chatItem.className += 'your_style';
+            } else {
+                chatItem1.className += 'all_messages';
+                chatItem.className += 'all_style';
+            }
+            chatItem.textContent = origin + ': ' + data.message;
+            chatItem1.appendChild(chatItem)
+            messageList.appendChild(chatItem1);
             window.scrollTo(0, document.body.scrollHeight);
         });
 
         socket.on('send message private', (data) => {
             if (data.destiny === username || data.user == username) {
                 const messageList = document.getElementById('message_list');
-                const chatItem = document.createElement('li');
-                chatItem.textContent = data.user + ': ' + data.message;
-                messageList.appendChild(chatItem);
+                const chatItem = document.createElement('div');
+                const chatItem1 = document.createElement('div')
+                var origin = data.user
+                if (data.user === username) {
+                    origin = 'You';
+                    chatItem1.className += 'your_messages';
+                    chatItem.className += 'your_style';
+                } else {
+                    chatItem1.className += 'all_messages';
+                    chatItem.className += 'all_style';
+                }
+                chatItem.textContent = origin + ': ' + data.message;
+                chatItem1.appendChild(chatItem)
+                messageList.appendChild(chatItem1);
                 window.scrollTo(0, document.body.scrollHeight);
             }
         });
 
         socket.on("send file", (data) => {
             const messageList = document.getElementById('message_list');
-            const chatItem = document.createElement('li');
-            chatItem.append(data.user + ' : ' + data.message);
+            const chatItem = document.createElement('div');
+            const chatItem1 = document.createElement('div')
+                var origin = data.user
+                if (data.user === username) {
+                    origin = 'You';
+                    chatItem1.className += 'your_messages';
+                    chatItem.className += 'your_style';
+                } else {
+                    chatItem1.className += 'all_messages';
+                    chatItem.className += 'all_style';
+                }
+            chatItem.textContent = origin + ': ' + data.message;
+            chatItem.append(origin + ' : ' + data.message);
             var img = new Image();
             img.src = data.file;
             var br = document.createElement('br');
             chatItem.append(br);
             chatItem.append(img);
-            messageList.appendChild(chatItem);
+            chatItem1.appendChild(chatItem)
+            messageList.appendChild(chatItem1);
         })
 
         socket.on('send file private', (data) => {
             const messageList = document.getElementById('message_list');
-            const chatItem = document.createElement('li');
-            chatItem.append(data.user + ': ' + data.message);
+            const chatItem = document.createElement('div');
+            const chatItem1 = document.createElement('div')
+                var origin = data.user
+                if (data.user === username) {
+                    origin = 'You';
+                    chatItem1.className += 'your_messages';
+                    chatItem.className += 'your_style';
+                } else {
+                    chatItem1.className += 'all_messages';
+                    chatItem.className += 'all_style';
+                }
+            chatItem.textContent = origin + ': ' + data.message;
             var img = new Image();
             img.src = data.file;
             var br = document.createElement('br');
             chatItem.append(br);
             chatItem.append(img);
+            chatItem1.appendChild(chatItem)
             if (data.destiny === username || data.user === username) {
-                messageList.appendChild(chatItem);
+                messageList.appendChild(chatItem1);
             }
         });
 
@@ -131,7 +216,7 @@
 
         socket.on('send server message', (data) => {
             const messageList = document.getElementById('message_list');
-            const chatItem = document.createElement('li');
+            const chatItem = document.createElement('p');
             chatItem.textContent = data.message;
             messageList.appendChild(chatItem);
             window.scrollTo(0, document.body.scrollHeight);
