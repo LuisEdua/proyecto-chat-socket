@@ -8,53 +8,97 @@
         body {
             background-color: black;
             color: aliceblue;
-
+            height: 98vh;
         }
 
-        #message_list{
+        #message_list {
             width: 95%;
-            border-width: 2px;
-            border-color: aliceblue;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-color: antiquewhite;
+            border-width: 10px;
+            overflow-y: scroll;
+        }
+
+        input{
+            width: 80%;
+        }
+
+        #message_area {
+            margin-bottom: 1%;
+            display: flex;
+            justify-content: center;
         }
 
         div {
             margin: 2%;
         }
 
-        .all_style{
-            width: 30%;
-            float: left;
-            background-color: white;
-            color: black;
+        .text{
+            margin: 1%;
         }
 
-        .your_style{
-            width: 30%;
-            float: right;
+        .chat {
+            width: 60%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: auto;
+        }
+
+        .server {
+            margin-top: auto;
+            margin-bottom: 1%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .all_style {
+            background-color: white;
+            color: black;
+            margin-left: 1%;
+            border-radius: 5px;
+            border-top-left-radius: 0px;
+        }
+
+        .your_style {
             background-color: aquamarine;
-            color: black;   
+            color: black;
+            margin-left: auto;
+            margin-right: 1%;
+            border-radius: 5px;
+            border-top-right-radius: 0px;
         }
 
         .all_messages {
+            margin-right: 10%;
+            width: 80%;
             display: flex;
-            justify-content: start;
+            align-items: start;
         }
 
         .your_messages {
+            margin-left: 10%;
+            width: 85%;
             display: flex;
-            justify-content: end;
+            align-items: end;
         }
     </style>
 </head>
 
 <body>
-    <div id="message_list"></div>
-    <form id="message_area" action="">
-        <input id="text_area" autocomplete="off" />
-        <input id="file_area" type="file">
-        <button>Send</button>
-    </form>
-
+    <div class="chat">
+        <center><h1>Chat</h1></center>
+        <div id="message_list"></div>
+        <form id="message_area" action="">
+            <input id="text_area" autocomplete="off" />
+            <input id="file_area" type="file">
+            <button>Send</button>
+        </form>
+    </div>
     <script>
         const socket = io();
 
@@ -122,90 +166,105 @@
 
         socket.on('send message', (data) => {
             const messageList = document.getElementById('message_list');
-            const chatItem = document.createElement('div');
-            const chatItem1 = document.createElement('div')
+            const chatItem = document.createElement('p');
+            const chatItem1 = document.createElement('div');
+            const chatItem2 = document.createElement('div');
             var origin = data.user
             if (data.user === username) {
                 origin = 'You';
-                chatItem1.className += 'your_messages';
-                chatItem.className += 'your_style';
+                chatItem2.className += 'your_messages';
+                chatItem1.className += 'your_style';
+                chatItem.className += 'text'
             } else {
-                chatItem1.className += 'all_messages';
-                chatItem.className += 'all_style';
+                chatItem2.className += 'all_messages';
+                chatItem1.className += 'all_style';
+                chatItem.className += 'text'
             }
             chatItem.textContent = origin + ': ' + data.message;
             chatItem1.appendChild(chatItem)
-            messageList.appendChild(chatItem1);
+            chatItem2.append(chatItem1);
+            messageList.appendChild(chatItem2);
             window.scrollTo(0, document.body.scrollHeight);
         });
 
         socket.on('send message private', (data) => {
             if (data.destiny === username || data.user == username) {
                 const messageList = document.getElementById('message_list');
-                const chatItem = document.createElement('div');
-                const chatItem1 = document.createElement('div')
+                const chatItem = document.createElement('p');
+                const chatItem1 = document.createElement('div');
+                const chatItem2 = document.createElement('div');
                 var origin = data.user
                 if (data.user === username) {
                     origin = 'You';
-                    chatItem1.className += 'your_messages';
-                    chatItem.className += 'your_style';
+                    chatItem2.className += 'your_messages';
+                    chatItem1.className += 'your_style';
+                    chatItem.className += 'your_text'
                 } else {
-                    chatItem1.className += 'all_messages';
-                    chatItem.className += 'all_style';
+                    chatItem2.className += 'all_messages';
+                    chatItem1.className += 'all_style';
+                    chatItem.className += 'your_text'
                 }
                 chatItem.textContent = origin + ': ' + data.message;
                 chatItem1.appendChild(chatItem)
-                messageList.appendChild(chatItem1);
+                chatItem2.append(chatItem1);
+                messageList.appendChild(chatItem2);
                 window.scrollTo(0, document.body.scrollHeight);
             }
         });
 
         socket.on("send file", (data) => {
             const messageList = document.getElementById('message_list');
-            const chatItem = document.createElement('div');
-            const chatItem1 = document.createElement('div')
-                var origin = data.user
-                if (data.user === username) {
-                    origin = 'You';
-                    chatItem1.className += 'your_messages';
-                    chatItem.className += 'your_style';
-                } else {
-                    chatItem1.className += 'all_messages';
-                    chatItem.className += 'all_style';
-                }
-            chatItem.textContent = origin + ': ' + data.message;
-            chatItem.append(origin + ' : ' + data.message);
+            const chatItem = document.createElement('p');
+            const chatItem1 = document.createElement('div');
+            const chatItem2 = document.createElement('div');
+            var origin = data.user
+            if (data.user === username) {
+                origin = 'You';
+                chatItem2.className += 'your_messages';
+                chatItem1.className += 'your_style';
+                chatItem.className += 'your_text'
+            } else {
+                chatItem2.className += 'all_messages';
+                chatItem1.className += 'all_style';
+                chatItem.className += 'your_text'
+            }
+            chatItem.textContent= origin + ' : ' + data.message;
             var img = new Image();
             img.src = data.file;
             var br = document.createElement('br');
-            chatItem.append(br);
-            chatItem.append(img);
             chatItem1.appendChild(chatItem)
-            messageList.appendChild(chatItem1);
+            chatItem1.append(br);
+            chatItem1.append(img);
+            chatItem2.append(chatItem1)
+            messageList.appendChild(chatItem2);
         })
 
         socket.on('send file private', (data) => {
             const messageList = document.getElementById('message_list');
-            const chatItem = document.createElement('div');
-            const chatItem1 = document.createElement('div')
-                var origin = data.user
-                if (data.user === username) {
-                    origin = 'You';
-                    chatItem1.className += 'your_messages';
-                    chatItem.className += 'your_style';
-                } else {
-                    chatItem1.className += 'all_messages';
-                    chatItem.className += 'all_style';
-                }
+            const chatItem = document.createElement('p');
+            const chatItem1 = document.createElement('div');
+            const chatItem2 = document.createElement('div');
+            var origin = data.user
+            if (data.user === username) {
+                origin = 'You';
+                chatItem2.className += 'your_messages';
+                chatItem1.className += 'your_style';
+                chatItem.className += 'your_text'
+            } else {
+                chatItem2.className += 'all_messages';
+                chatItem1.className += 'all_style';
+                chatItem.className += 'your_text'
+            }
             chatItem.textContent = origin + ': ' + data.message;
             var img = new Image();
             img.src = data.file;
             var br = document.createElement('br');
-            chatItem.append(br);
-            chatItem.append(img);
-            chatItem1.appendChild(chatItem)
+            chatItem1.append(chatItem);
+            chatItem1.append(br);
+            chatItem1.append(img);
+            chatItem2.appendChild(chatItem1)
             if (data.destiny === username || data.user === username) {
-                messageList.appendChild(chatItem1);
+                messageList.appendChild(chatItem2);
             }
         });
 
@@ -217,6 +276,7 @@
         socket.on('send server message', (data) => {
             const messageList = document.getElementById('message_list');
             const chatItem = document.createElement('p');
+            chatItem.classList += 'server'
             chatItem.textContent = data.message;
             messageList.appendChild(chatItem);
             window.scrollTo(0, document.body.scrollHeight);
